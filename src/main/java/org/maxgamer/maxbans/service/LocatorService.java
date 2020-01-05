@@ -1,5 +1,6 @@
 package org.maxgamer.maxbans.service;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.maxgamer.maxbans.orm.Address;
@@ -8,6 +9,7 @@ import org.maxgamer.maxbans.orm.User;
 import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author netherfoam
@@ -43,6 +45,32 @@ public class LocatorService {
 
         // Couldn't find any user anywhere with that name
         return null;
+    }
+
+    public User userOrOffline(String name) {
+        User user = user(name);
+        if (user != null) return user;
+
+        OfflinePlayer player = server.getOfflinePlayer(name);
+        return userService.getOfflineOrCreate(player.getUniqueId());
+    }
+
+    /**
+     *
+     * @param uuid The UUID of the (offline) player
+     * @return
+     *  User if a user was found.
+     *  null if the uuid is invalid or a user could not be found.
+     */
+    public User uuid(String uuid) {
+        try {
+            // Passing uuid to offline player seems to mess it up?
+            // which makes no sense because we're literally giving them the uuid
+            // why they gotta change it?
+            return userService.getOfflineOrCreate(UUID.fromString(uuid));
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     public Player player(User user) {

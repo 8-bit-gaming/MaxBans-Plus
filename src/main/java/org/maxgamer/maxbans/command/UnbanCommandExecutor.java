@@ -48,7 +48,7 @@ public class UnbanCommandExecutor extends IPRestrictionCommandExecutor {
             any = true;
         }
 
-        if(addressService.getBan(address) != null) {
+        if(address != null && addressService.getBan(address) != null) {
             addressService.unban(source, address);
             message.with("address", address.getHost());
             broadcastService.broadcast(message.get("ban.unban"), silent, sender);

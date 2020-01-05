@@ -6,6 +6,7 @@ import org.maxgamer.maxbans.exception.CancelledException;
 import org.maxgamer.maxbans.exception.MessageException;
 import org.maxgamer.maxbans.exception.PermissionException;
 import org.maxgamer.maxbans.exception.RejectedException;
+import org.maxgamer.maxbans.orm.Restriction;
 import org.maxgamer.maxbans.orm.User;
 import org.maxgamer.maxbans.service.LocatorService;
 import org.maxgamer.maxbans.transaction.TransactionLayer;
@@ -31,6 +32,7 @@ public abstract class UserRestrictionCommandExecutor extends StandardCommandExec
     public final void perform(CommandSender sender, Command command, String s, String[] userArgs) throws MessageException, CancelledException {
         LinkedList<String> args = new LinkedList<>(Arrays.asList(userArgs));
         boolean silent = RestrictionUtil.isSilent(args);
+        boolean isUUID = RestrictionUtil.isUUID(args);
 
         if(args.size() <= 0) {
             sender.sendMessage("Must supply target name");
@@ -38,7 +40,12 @@ public abstract class UserRestrictionCommandExecutor extends StandardCommandExec
         }
 
         try (TransactionLayer tx = transactor.transact()) {
-            User user = locatorService.user(args.pop());
+            User user;
+            if (!isUUID)
+                user = locatorService.userOrOffline(args.pop());
+            else
+                user = locatorService.uuid(args.pop());
+
             if (user == null) {
                 sender.sendMessage("Player not found");
                 return;

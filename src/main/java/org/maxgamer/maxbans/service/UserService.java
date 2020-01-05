@@ -1,5 +1,6 @@
 package org.maxgamer.maxbans.service;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.maxgamer.maxbans.config.PluginConfig;
 import org.maxgamer.maxbans.event.BanUserEvent;
@@ -18,6 +19,7 @@ import org.maxgamer.maxbans.repository.BanRepository;
 import org.maxgamer.maxbans.repository.MuteRepository;
 import org.maxgamer.maxbans.repository.UserRepository;
 import org.maxgamer.maxbans.util.RestrictionUtil;
+import org.maxgamer.maxbans.util.UUIDFetcher;
 
 import javax.inject.Inject;
 import java.time.Duration;
@@ -62,6 +64,10 @@ public class UserService {
         return user;
     }
 
+    public User create(UUID id) {
+        return create(id, "", Instant.ofEpochMilli(0));
+    }
+
     public User create(Player player) {
         UUID id;
         if(config.isOffline()) {
@@ -101,6 +107,20 @@ public class UserService {
         }
 
         return create(player);
+    }
+
+    public User getOfflineOrCreate(UUID playerUUID) {
+        User user = get(playerUUID);
+        if (user != null)
+            return user;
+
+        // Fetch the name synchronously, if this becomes an issue we can be async.
+        // Returns null if player does not exist or uuid could not be fetched.
+        String playerName = UUIDFetcher.getName(playerUUID);
+        if (playerName == null)
+            return null;
+
+        return create(playerUUID, playerName, Instant.ofEpochMilli(0));
     }
 
     public Ban getBan(User user) {
@@ -260,7 +280,7 @@ public class UserService {
     }
 
     public MessageBuilder report(User user, Locale locale) throws RejectedException {
-        if(user == null || user.getAddresses().isEmpty()) {
+        if(user == null ) { //|| user.getAddresses().isEmpty()) {
             throw new RejectedException("iplookup.never");
         }
 

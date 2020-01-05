@@ -51,27 +51,28 @@ public abstract class IPRestrictionCommandExecutor extends StandardCommandExecut
             String ipOrUser = args.pop();
             User user = null;
             String ip;
+            Address address = null;
 
             try {
                 ip = InetAddresses.forString(ipOrUser).getHostAddress();
+                address = addressService.getOrCreate(ip);
             } catch (IllegalArgumentException e) {
                 user = locatorService.user(ipOrUser);
+                address = null;
 
                 if(user == null) {
                     throw new MessageException("No player starting with " + ipOrUser + " found");
                 }
 
-                if(user.getAddresses().isEmpty()) {
-                    sender.sendMessage("Player has no IP history");
-                    return;
-                }
-
-                ip = user.getAddresses().get(user.getAddresses().size() - 1).getAddress().getHost();
+                if(!user.getAddresses().isEmpty()) {
+                    ip = user.getAddresses().get(user.getAddresses().size() - 1).getAddress().getHost();
+                    address = addressService.getOrCreate(ip);
+                }// else
+                    //sender.sendMessage("Player has no IP history");
             }
 
             Duration duration = RestrictionUtil.getDuration(args);
             String reason = String.join(" ", args);
-            Address address = addressService.getOrCreate(ip);
 
             restrict(sender, address, user, duration, reason, silent);
         }

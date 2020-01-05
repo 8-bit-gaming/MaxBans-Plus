@@ -70,7 +70,21 @@ public class RestrictionUtil {
 
         return false;
     }
-    
+
+    public static boolean isUUID(LinkedList<String> args) {
+        Iterator<String> it = args.iterator();
+        while(it.hasNext()) {
+            String arg = it.next();
+
+            if(arg.equalsIgnoreCase("-u")) {
+                it.remove();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static Duration getDuration(LinkedList<String> args) {
         if(args.size() < 2) return null;
         
