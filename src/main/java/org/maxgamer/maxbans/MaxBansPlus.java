@@ -101,8 +101,8 @@ public class MaxBansPlus extends JavaPlugin {
 
         if(config.isErrorTracking()) {
             // Enabling error tracking means we use a sentry logger
-            SentryClient client = Sentry.init("https://34922284faf14712b3a75f86c883349e:18ac8a9a9d6e4dc1a8265daf47d0e223@sentry.io/171230");
-            sentryLogger = new SentryLogger(this, Event.Level.WARNING, client);
+           // SentryClient client = Sentry.init("https://34922284faf14712b3a75f86c883349e:18ac8a9a9d6e4dc1a8265daf47d0e223@sentry.io/171230");
+             //sentryLogger = new SentryLogger(this, Event.Level.WARNING, client);
         }
 
         context = new PluginContext(this, config, locale, getServer(), getDataFolder(), getErrorLogger(), getServer().getPluginManager());

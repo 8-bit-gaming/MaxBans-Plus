@@ -8,7 +8,6 @@ import org.maxgamer.maxbans.config.WarningConfig;
 import org.maxgamer.maxbans.service.*;
 import org.maxgamer.maxbans.service.metric.MetricService;
 import org.maxgamer.maxbans.service.metric.VoidMetricService;
-import org.maxgamer.maxbans.service.metric.bStatsMetricService;
 
 import javax.inject.Singleton;
 
@@ -32,11 +31,7 @@ public class ServiceModule {
     @Provides
     @Singleton
     public MetricService metricService(PluginConfig config, MaxBansPlus plugin) {
-        if (!config.isMetrics()) {
             return new VoidMetricService();
-        }
-
-        return new bStatsMetricService(plugin);
     }
 
     @Provides
